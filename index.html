@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cargar Archivos a RDS</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <h1>Nombre</h1>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <input type="file" id="fileInput" accept=".csv, .txt">
+                <button id="uploadButton" class="btn btn-primary">Cargar Archivo</button>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <button id="loadDataButton" class="btn btn-primary mt-5">Descargar Archivo</button>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descargar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fileList">
+                        <!-- La lista de archivos se llenará aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadButton').addEventListener('click', () => {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('archivo', file);
+
+                fetch('/cargar-archivo', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Archivo cargado con éxito.');
+                        } else {
+                            alert('Error al cargar el archivo.');
+                        }
+                    });
+            } else {
+                alert('Selecciona un archivo para cargar.');
+            }
+        });
+
+        document.getElementById('loadDataButton').addEventListener('click', () => {
+            // Realiza una solicitud para obtener datos de RDS y actualiza la tabla
+            fetch('/obtener-datos-de-rds')
+                .then(response => response.json())
+                .then(data => {
+                    // Limpia la tabla
+                    const fileList = document.getElementById('fileList');
+                    fileList.innerHTML = '';
+
+                    // Agrega los datos de RDS a la tabla
+                    data.forEach(row => {
+                        const newRow = document.createElement('tr');
+                        newRow.innerHTML = `
+                            <td>${row.nombre}</td>
+                            <td><a href="${row.url}" target="_blank" class="btn btn-secondary">Descargar</a></td>
+                        `;
+                        fileList.appendChild(newRow);
+                    });
+                });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
