@@ -1,29 +1,27 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Cargar Archivos</title>
+    <title>Cargar y Descargar Archivos desde S3</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-
 <body>
     <div class="container">
         <div class="row mt-5">
             <div class="col-12 text-center">
-                <h1>Cargar Archivos</h1>
+                <h1>Cargue su archivo...</h1>
             </div>
         </div>
 
         <div class="row mt-3">
             <div class="col-12 text-center">
                 <input type="file" id="fileInput" accept=".csv, .txt">
-                <button id="uploadButton" class="btn btn-primary">Cargar Archivo</button>
+                <button id="uploadButton" class="btn btn-primary">Subir Archivo</button>
             </div>
         </div>
 
-        <div class="row mt-3">
+        <div class="row mt-5">
             <div class="col-12 text-center">
-                <button id="loadDataButton" class="btn btn-primary mt-5">Descargar Archivo</button>
+                <button id="loadDataButton" class="btn btn-primary">Cargar Archivos</button>
             </div>
         </div>
 
@@ -57,34 +55,31 @@
                     method: 'POST',
                     body: formData
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Archivo cargado con éxito.');
-                        } else {
-                            alert('Error al cargar el archivo.');
-                        }
-                    });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Archivo cargado con éxito.');
+                    } else {
+                        alert('Error al cargar el archivo.');
+                    }
+                });
             } else {
                 alert('Selecciona un archivo para cargar.');
             }
         });
 
         document.getElementById('loadDataButton').addEventListener('click', () => {
-            // Realiza una solicitud para obtener datos de RDS y actualiza la tabla
             fetch('/obtener-datos-de-rds')
                 .then(response => response.json())
                 .then(data => {
-                    // Limpia la tabla
                     const fileList = document.getElementById('fileList');
                     fileList.innerHTML = '';
 
-                    // Agrega los datos de RDS a la tabla
                     data.forEach(row => {
                         const newRow = document.createElement('tr');
                         newRow.innerHTML = `
                             <td>${row.nombre}</td>
-                            <td><a href="${row.url}" target="_blank" class="btn btn-secondary">Descargar</a></td>
+                            <td><a href="${row.urlS3}" target="_blank" download>Descargar</a></td>
                         `;
                         fileList.appendChild(newRow);
                     });
@@ -96,5 +91,4 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-
 </html>
