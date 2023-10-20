@@ -49,20 +49,20 @@
 
             if (file) {
                 const formData = new FormData();
-                formData.append('archivo', file);
+                formData.append('file',file)
 
                 fetch('http://back-loadbalancer-1963456092.us-west-2.elb.amazonaws.com/upload_file', {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message) {
-                        alert('Archivo cargado con éxito. Nombre del archivo en el servidor: ' + data.file_name);
-                    } else {
-                        alert('Error al cargar el archivo.');
-                    }
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            alert('Archivo cargado con éxito. Nombre del archivo en el servidor: ' + data.file_name);
+                        } else {
+                            alert('Error al cargar el archivo.');
+                        }
+                    });
             } else {
                 alert('Selecciona un archivo para cargar.');
             }
