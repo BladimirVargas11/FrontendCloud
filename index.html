@@ -51,7 +51,7 @@
                 const formData = new FormData();
                 formData.append('archivo', file);
 
-                fetch('http://lab-balance-back-366551985.us-west-2.elb.amazonaws.com/cargar-archivo', {
+                fetch('http://lab-balance-back-366551985.us-west-2.elb.amazonaws.com/upload_file', {
                     method: 'POST',
                     body: formData
                 })
@@ -69,7 +69,7 @@
         });
 
         document.getElementById('loadDataButton').addEventListener('click', () => {
-            fetch('http://lab-balance-back-366551985.us-west-2.elb.amazonaws.com/obtener-datos-de-rds')
+            fetch('http://lab-balance-back-366551985.us-west-2.elb.amazonaws.com/list_files')
                 .then(response => response.json())
                 .then(data => {
                     const fileList = document.getElementById('fileList');
