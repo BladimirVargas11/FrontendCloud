@@ -15,13 +15,13 @@
         <div class="row mt-3">
             <div class="col-12 text-center">
                 <input type="file" id="fileInput">
-                <button id="uploadButton" class="btn btn-primary">Cargar Archivo</button>
+                <button id="uploadButton" class="btn btn-primary">Subir Archivo</button>
             </div>
         </div>
 
         <div class="row mt-5">
             <div class="col-12 text-center">
-                <button id="loadDataButton" class="btn btn-primary">Subir Archivos</button>
+                <button id="loadDataButton" class="btn btn-primary">Cargar Archivos</button>
             </div>
         </div>
 
@@ -51,14 +51,14 @@
                 const formData = new FormData();
                 formData.append('archivo', file);
 
-                fetch('http://lab-balance-back-366551985.us-west-2.elb.amazonaws.com/cargar-archivo', {
+                fetch('http://back-loadbalancer-1963456092.us-west-2.elb.amazonaws.com/upload_file', {
                     method: 'POST',
                     body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        alert('Archivo cargado con éxito.');
+                    if (data.message) {
+                        alert('Archivo cargado con éxito. Nombre del archivo en el servidor: ' + data.file_name);
                     } else {
                         alert('Error al cargar el archivo.');
                     }
@@ -69,17 +69,17 @@
         });
 
         document.getElementById('loadDataButton').addEventListener('click', () => {
-            fetch('http://lab-balance-back-366551985.us-west-2.elb.amazonaws.com/obtener-datos-de-rds')
+            fetch('http://back-loadbalancer-1963456092.us-west-2.elb.amazonaws.com/list_files')
                 .then(response => response.json())
                 .then(data => {
                     const fileList = document.getElementById('fileList');
                     fileList.innerHTML = '';
 
-                    data.forEach(row => {
+                    data.files.forEach(fileName => {
                         const newRow = document.createElement('tr');
                         newRow.innerHTML = `
-                            <td>${row.nombre}</td>
-                            <td><a href="${row.urlS3}" target="_blank" download>Descargar</a></td>
+                            <td>${fileName}</td>
+                            <td><a href="http://back-loadbalancer-1963456092.us-west-2.elb.amazonaws.com/download/${fileName}" target="_blank" download>Descargar</a></td>
                         `;
                         fileList.appendChild(newRow);
                     });
